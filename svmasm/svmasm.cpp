@@ -108,6 +108,8 @@ int main(int argc, char *argv[])
                     if (!(tokens >> data)) {
                         std::cerr << "Invalid relative address."
                                   << std::endl;
+
+                        return -1;
                     }
 
                     ops.push_back(instruction);

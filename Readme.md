@@ -3,7 +3,7 @@ SVM
 
 A simple virtual machine to illustrate core concepts of a computer system.
 
-## Building
+## Compilation
 
 ### Most Unix/Unix-like Systems (including the Cygwin environment and Mac OS)
 
