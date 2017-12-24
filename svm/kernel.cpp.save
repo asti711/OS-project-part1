@@ -98,47 +98,12 @@ namespace svm
                 //  Round Robin scheduler
 
                 // Unload the current process
-		std::cout << "Number of Processes left = " << processes.size() << std::endl;
 
-		processes.erase(processes.begin() + _current_process_index);
-		if (processes.empty()) {
-			board.Stop();
-		} else {
-			if (_current_process_index >= processes.size()) {
-				_current_process_index = 0;
-			}
-			board.cpu.registers = processes[_current_process_index].registers;
-			processes[_current_process_index].state = Process::States::Running;
-		}
             };
         } else if (scheduler == Priority) {
             board.pic.isr_0 = [&]() {
                 // ToDo: Process the timer interrupt for the Priority Queue
                 //  scheduler
-		std::cout << "Priority of the current process = " << priorities.top().priority << "\t Cycles = " << priorities.top()._DYNAMIC_MAX_CYCLES_BEFORE_PREEMPTION << std::endl;
-
-		_cycles_passed_after_preemption++;
-		if (_cycles_passed_after_preemption > priorities.top()._DYNAMIC_MAX_CYCLES_BEFORE_PREEMPTION) {
-			_cycles_passed_after_preemption = 0;
-
-			Process temp = priorities.top();
-			temp.registers = board.cpu.registers;
-			temp.state = Process::States::Ready;
-			priorities.pop();
-			if (temp.priority > 0) {
-				temp.priority--;
-				temp.updateCycles();
-			}
-			priorities.push(temp);
-			if (priorities.empty()) {
-				board.Stop();
-			}
-			else {
-				Process t = priorities.top();
-				board.cpu.registers = t.registers;
-				t.state = Process::States::Running;
-			}
-		}
             };
 
             board.pic.isr_3 = [&]() {
@@ -146,26 +111,6 @@ namespace svm
                 //  Queue scheduler
 
                 // Unload the current process
-		std::cout << "Number of Processes left = " << processes.size() << std::endl;
-
-		if (board.cpu.registers.a == 1) {
-			priorities.pop();
-			if (priorities.empty()) {
-				board.Stop();
-			}
-			else {
-				Process t = priorities.top();
-				board.cpu.registers = t.registers;
-				priorities.pop();
-				t.state = Process::States::Running;
-				priorities.push(t);
-			}
-		} else if (board.cpu.registers.a == 2) {
-			Process t = priorities.top();
-			priorities.pop();
-			t.priority = board.cpu.registers.b;
-			priorities.push(t);
-		}
             };
         }
 
@@ -196,25 +141,10 @@ namespace svm
             executable.size();
 
         // ToDo: add the new process to an appropriate data structure
-        //processes.push_back(process);
+        processes.push_back(process);
 
         // ToDo: process the data structure
 
-	if (scheduler == Priority) {
-		if (board.cpu.registers.a = 2) {
-			process.priority = board.cpu.registers.b;
-		}
-		board.cpu.registers.a = 1;
-		priorities.push(process);
-	}
-	else if (scheduler == ShortestJob) {
-		processes.push_back(process);
-		std::sort(processes.begin(), processes.end(), [](const Process &a, const Process &b) {
-			return a.sequential_instruction_count > b.sequential_instruction_count;
-		});
-	}
-	else {
-		processes.push_back(process);
-	}
+        // ---
     }
 }

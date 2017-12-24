@@ -203,7 +203,7 @@ namespace svm
 	if (scheduler == Priority) {
 		if (board.cpu.registers.a = 2) {
 			process.priority = board.cpu.registers.b;
-		}
+			process.updateCycles();		}
 		board.cpu.registers.a = 1;
 		priorities.push(process);
 	}
