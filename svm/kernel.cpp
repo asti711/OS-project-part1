@@ -115,10 +115,10 @@ namespace svm
             board.pic.isr_0 = [&]() {
                 // ToDo: Process the timer interrupt for the Priority Queue
                 //  scheduler
-		std::cout << "Priority of the current process = " << priorities.top().priority << "\t Cycles = " << priorities.top()._DYNAMIC_MAX_CYCLES_BEFORE_PREEMPTION << std::endl;
+		std::cout << "Priority of the current process = " << priorities.top().priority << "\t Cycles = " << _MAX_CYCLES_BEFORE_PREEMPTION << std::endl;
 
 		_cycles_passed_after_preemption++;
-		if (_cycles_passed_after_preemption > priorities.top()._DYNAMIC_MAX_CYCLES_BEFORE_PREEMPTION) {
+		if (_cycles_passed_after_preemption > _MAX_CYCLES_BEFORE_PREEMPTION) {
 			_cycles_passed_after_preemption = 0;
 
 			Process temp = priorities.top();
@@ -127,7 +127,6 @@ namespace svm
 			priorities.pop();
 			if (temp.priority > 0) {
 				temp.priority--;
-				temp.updateCycles();
 			}
 			priorities.push(temp);
 			if (priorities.empty()) {
